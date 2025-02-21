@@ -32,7 +32,7 @@ Evaluates which packages already declare support for Django 5.2, and returns the
 
 Spreadsheet: [Django 5.2 - Django-Wagtail packages ecosystem on PyPI](https://docs.google.com/spreadsheets/d/1CnBjurD7WE0NDXt-KU_Y3p_VABLNKf3pSuDSDUfoSpU/edit?gid=1028186010#gid=1028186010)
 
-SQL: [django-5-2.sql](django-5-2.sql)
+SQL: [packages-django-5-2.sql](packages-django-5-2.sql)
 
 Here are the packages from the first run:
 
