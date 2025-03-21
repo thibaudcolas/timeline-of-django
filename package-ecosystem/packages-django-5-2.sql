@@ -17,7 +17,7 @@ LANGUAGE js AS """
     return `- [${name} v${version}](${url})`;
 """;
 
-WITH
+WITH 
   -- Factor out the pattern logic once.
   allowed_packages AS (
     SELECT DISTINCT name
@@ -59,11 +59,11 @@ WITH
     JOIN allowed_packages ap
       ON dm.name = ap.name
     WHERE dm.packagetype = 'bdist_wheel'
-      AND dm.upload_time >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 14 DAY)
+      AND dm.upload_time BETWEEN TIMESTAMP('2025-01-16T09:15:08.000Z') AND CURRENT_TIMESTAMP()
       AND "Framework :: Django :: 5.2" IN UNNEST(dm.classifiers)
     QUALIFY ROW_NUMBER() OVER (PARTITION BY dm.name ORDER BY dm.upload_time DESC) = 1
   )
-
+  
 SELECT
   l.name,
   l.version AS latest_release,
