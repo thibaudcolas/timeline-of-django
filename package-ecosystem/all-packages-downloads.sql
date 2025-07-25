@@ -9,33 +9,49 @@ LANGUAGE js AS """
 """;
 
 WITH
+  DjangoPackages AS (
+    SELECT DISTINCT
+      name
+    FROM
+      `bigquery-public-data.pypi.distribution_metadata`
+    WHERE
+      -- Hyphenation attack or preemptive hyphenation attack in 2020-07-29
+      author != 'The Guardians'
+      AND (
+        -- Bug: must account for Django having an uppercase 'D' in its name.
+        REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
+        OR
+        EXISTS (SELECT 1 FROM UNNEST(classifiers) AS c WHERE c = 'Framework :: Django')
+      )
+  ),
   PackageStats AS (
     SELECT
-      name,
-      COUNT(DISTINCT version) AS number_of_releases,
-      MIN(upload_time) AS first_release_upload_time,
-      MAX(upload_time) AS latest_release_upload_time
+      md.name,
+      COUNT(DISTINCT md.version) AS number_of_releases,
+      MIN(md.upload_time) AS first_release_upload_time,
+      MAX(md.upload_time) AS latest_release_upload_time
     FROM
-      `bigquery-public-data`.pypi.distribution_metadata
-    WHERE
-      -- Bug: must account for Django having an uppercase 'D' in its name.
-      REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
+      `bigquery-public-data.pypi.distribution_metadata` AS md
+    JOIN
+      DjangoPackages USING (name)
     GROUP BY
-      name
+      md.name
   ),
   RecentDownloads AS (
     SELECT
-      project AS name,
-      COUNT(*) AS downloads_30d
+      fd.project       AS name,
+      COUNT(*)         AS downloads_30d
     FROM
-      `bigquery-public-data`.pypi.file_downloads
+      `bigquery-public-data.pypi.file_downloads` AS fd
+    JOIN
+      DjangoPackages AS dp
+    ON
+      fd.project = dp.name
     WHERE
-      -- Expensive: 30 days across all releases (1TB)
-      timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-      -- Expensive: wagtail and django suffix (0.5TB)
-      AND REGEXP_CONTAINS(project, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
+      -- Expensive: 30 days across all releases (1.5TB)
+      fd.timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
     GROUP BY
-      project
+      fd.project
   )
 SELECT
   ps.name,
@@ -54,7 +70,7 @@ SELECT
 FROM
   PackageStats AS ps
   LEFT JOIN
-    `bigquery-public-data`.pypi.distribution_metadata AS d
+    `bigquery-public-data.pypi.distribution_metadata` AS d
     ON ps.name = d.name AND ps.latest_release_upload_time = d.upload_time
   LEFT JOIN
     RecentDownloads AS rd
