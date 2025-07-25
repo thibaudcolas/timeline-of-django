@@ -1,4 +1,5 @@
 #standardSQL
+--- Retrieves all package releases declaring compatibility with Django 5.2.
 -- https://docs.google.com/spreadsheets/d/1CnBjurD7WE0NDXt-KU_Y3p_VABLNKf3pSuDSDUfoSpU/edit?gid=1028186010#gid=1028186010
 CREATE TEMP FUNCTION toMarkdown(
     name STRING,
@@ -17,34 +18,13 @@ LANGUAGE js AS """
     return `- [${name} v${version}](${url})`;
 """;
 
-WITH 
+WITH
   -- Factor out the pattern logic once.
   allowed_packages AS (
     SELECT DISTINCT name
     FROM `bigquery-public-data.pypi.distribution_metadata`
     WHERE packagetype = 'bdist_wheel'
-      AND (
-        name IN (
-          'django',
-          'posthog',
-          'ralph',
-          'pretix',
-          'iommi',
-          'wagtail',
-          'coderedcms',
-          'longclaw',
-          'wagalytics',
-          'puput',
-          'ls.joyous',
-          'feincms',
-          'strawberry'
-        )
-        OR name LIKE 'dj%'
-        OR name LIKE 'drf-%'
-        OR name LIKE 'wagtail%'
-        OR name LIKE 'feincms%'
-        OR name LIKE 'strawberry%'
-      )
+      AND REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
   ),
   latest AS (
     SELECT
@@ -63,7 +43,7 @@ WITH
       AND "Framework :: Django :: 5.2" IN UNNEST(dm.classifiers)
     QUALIFY ROW_NUMBER() OVER (PARTITION BY dm.name ORDER BY dm.upload_time DESC) = 1
   )
-  
+
 SELECT
   l.name,
   l.version AS latest_release,

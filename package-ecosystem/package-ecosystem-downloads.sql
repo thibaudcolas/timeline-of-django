@@ -18,14 +18,14 @@ WHERE
       'wagalytics',
       'puput',
       'ls.joyous',
-      'feincms',
-      'strawberry'
+      'feincms'
+      'mezzanine'
     )
     OR dl.project LIKE 'dj%'
     OR dl.project LIKE 'drf-%'
     OR dl.project LIKE 'wagtail%'
     OR dl.project LIKE 'feincms%'
-    OR dl.project LIKE 'strawberry%'
+    OR dl.project LIKE 'mezzanine%'
   )
 GROUP BY
   dl.project

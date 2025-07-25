@@ -20,28 +20,7 @@ FROM
       `bigquery-public-data.pypi.distribution_metadata` as dm
     WHERE
       dm.packagetype = 'bdist_wheel'
-      AND (
-        name IN (
-          'django',
-          'posthog',
-          'ralph',
-          'pretix',
-          'iommi',
-          'wagtail',
-          'coderedcms',
-          'longclaw',
-          'wagalytics',
-          'puput',
-          'ls.joyous',
-          'feincms',
-          'strawberry'
-        )
-        OR name LIKE 'dj%'
-        OR name LIKE 'drf-%'
-        OR name LIKE 'wagtail%'
-        OR name LIKE 'feincms%'
-        OR name LIKE 'strawberry%'
-      )
+      AND REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
     GROUP BY
       dm.name
   ) as latest,
@@ -52,30 +31,8 @@ FROM
     FROM
       `bigquery-public-data.pypi.file_downloads` AS dl
     WHERE
-      dl.details.installer.name = 'pip'
-      AND dl.timestamp > TIMESTAMP_SUB (CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-      AND (
-        dl.project IN (
-          'django',
-          'posthog',
-          'ralph',
-          'pretix',
-          'iommi',
-          'wagtail',
-          'coderedcms',
-          'longclaw',
-          'wagalytics',
-          'puput',
-          'ls.joyous',
-          'feincms',
-          'strawberry'
-        )
-        OR dl.project LIKE 'dj%'
-        OR dl.project LIKE 'drf-%'
-        OR dl.project LIKE 'wagtail%'
-        OR dl.project LIKE 'feincms%'
-        OR dl.project LIKE 'strawberry%'
-      )
+      dl.timestamp > TIMESTAMP_SUB (CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+      AND REGEXP_CONTAINS(dl.project, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
     GROUP BY
       dl.project
   ) as downloads
