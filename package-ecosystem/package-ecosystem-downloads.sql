@@ -4,9 +4,7 @@ SELECT
 FROM
   `bigquery-public-data.pypi.file_downloads` AS dl
 WHERE
-  dl.details.installer.name = 'pip'
   AND dl.timestamp > TIMESTAMP_SUB (CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-  AND SUBSTRING(dl.details.python, 0, 3) IS NOT NULL
   AND (
     dl.project IN (
       'django',
