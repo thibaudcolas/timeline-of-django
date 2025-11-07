@@ -5,7 +5,7 @@
 View [Django - Download](https://www.djangoproject.com/download/) for an overview of release end-of-life dates, see also [PyPI Django releases history](https://pypi.org/project/Django/#history).
 
 ```bash
-curl https://packages.ecosyste.ms/api/v1/registries/pypi.org/packages/django/versions\?per_page\=500 > django-versions.json
+curl https://packages.ecosyste.ms/api/v1/registries/pypi.org/packages/django/versions\?per_page\=500 | jq '[ .[] | { number, published_at } ]' > django-versions.json
 cat django-versions.json  | jq '.[] | "\(.number): \(.published_at)"' > django-versions.txt
 cat django-versions.txt | grep -v -e '\.[0-9]\.' | grep -v -e '\.[0-9][0-9]\.' | grep -v -e '[bc]' > django-releases.csv
 ```
