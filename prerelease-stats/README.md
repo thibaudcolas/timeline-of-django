@@ -5,7 +5,7 @@
 Generated from an extract of all past Django feature releases, including their pre- and final releases.
 
 ```bash
-curl https://packages.ecosyste.ms/api/v1/registries/pypi.org/packages/django/versions\?per_page\=500 > django-versions.json
+curl https://packages.ecosyste.ms/api/v1/registries/pypi.org/packages/django/versions\?per_page\=500 | jq '[ .[] | { number, published_at } ]' > django-versions.json
 # Only keep numbers and dates.
 cat django-versions.json  | jq '.[] | "\(.number): \(.published_at)"' > django-versions.txt
 # Only keep pre-releases and final releases.
