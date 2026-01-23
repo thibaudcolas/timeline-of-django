@@ -1,3 +1,4 @@
+-- DuckDB: Calculates web framework popularity, loved/wanted/dreaded metrics from Stack Overflow 2021 survey data.
 create table results_2021 as WITH frameworks AS (
     SELECT UNNEST([
         'Angular',

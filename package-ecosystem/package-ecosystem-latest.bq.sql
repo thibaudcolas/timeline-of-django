@@ -1,3 +1,4 @@
+-- BigQuery: Retrieves the latest wheel release metadata for Django-related packages on PyPI.
 WITH
   latest_uploads AS (
     SELECT

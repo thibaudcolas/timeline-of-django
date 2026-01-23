@@ -1,3 +1,4 @@
+-- DuckDB: Pivots FastAPI daily downloads by minor version into wide-format columns.
 create table pivot_downloads as
 SELECT
     day,

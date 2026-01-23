@@ -1,4 +1,4 @@
--- Attach SWE-bench datasets
+-- DuckDB: Loads SWE-bench parquet datasets and summarizes entry counts per repository and split.
 CREATE VIEW swe_dev AS SELECT *, 'SWE-bench' AS source, 'dev' AS split FROM 'SWE-bench/data/dev-00000-of-00001.parquet';
 CREATE VIEW swe_test AS SELECT *, 'SWE-bench' AS source, 'test' AS split FROM 'SWE-bench/data/test-00000-of-00001.parquet';
 CREATE VIEW swe_train AS SELECT *, 'SWE-bench' AS source, 'train' AS split FROM 'SWE-bench/data/train-00000-of-00001.parquet';

@@ -1,5 +1,5 @@
 #standardSQL
--- BigQuery – downloads of the FastAPI project by version by day
+-- BigQuery: Counts daily downloads of the Django package by version over time.
 WITH filtered_downloads AS (
   SELECT
     dl.timestamp,

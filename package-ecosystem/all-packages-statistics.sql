@@ -1,4 +1,4 @@
--- DuckDB SQL for local use after package-ecosystem-downloads.sql
+-- DuckDB: Computes aggregate statistics (release counts, recency, ecosystem breakdowns) for Django packages.
 SELECT
   -- after Django 5.2 release
   COUNT(distinct(name)) FILTER (

@@ -1,3 +1,4 @@
+-- DuckDB: Filters Django sites to identify government domains based on TLD patterns.
 select
   origin,
   rank,

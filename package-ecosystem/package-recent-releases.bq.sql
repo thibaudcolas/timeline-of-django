@@ -1,3 +1,4 @@
+-- BigQuery: Retrieves Django-related packages with their latest release metadata and daily download counts.
 SELECT
   dm.name,
   downloads.downloads_count,

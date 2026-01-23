@@ -1,4 +1,5 @@
 #standardSQL
+-- BigQuery: Counts Django downloads by version during pre-release periods for adoption analysis.
 WITH downloads AS (
   SELECT *
   FROM `bigquery-public-data.pypi.file_downloads` as dl

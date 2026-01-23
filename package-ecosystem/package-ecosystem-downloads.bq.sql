@@ -1,3 +1,4 @@
+-- BigQuery: Counts 30-day downloads for Django-related packages on PyPI.
 SELECT
   dl.project,
   COUNT(*) AS downloads_count

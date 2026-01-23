@@ -1,3 +1,4 @@
+-- DuckDB: Counts daily package releases and new packages over time from the releases table.
 copy(WITH first_release AS (
   -- First release date per package
   SELECT

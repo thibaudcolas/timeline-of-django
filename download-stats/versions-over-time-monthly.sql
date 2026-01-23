@@ -1,5 +1,5 @@
 #standardSQL
--- BigQuery – downloads of the Django project by version ove rtime
+-- BigQuery: Counts monthly downloads of the Django package by version over time.
 WITH filtered_downloads AS (
   SELECT
     timestamp,
