@@ -5,11 +5,11 @@ Tools related to analyzing the packages landscape. Dataset: [PyPI on BigQuery](h
 ## Package ecosystem overview
 
 ```bash
-cat package-ecosystem-downloads.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
-cat package-recent-releases.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
+cat package-ecosystem-downloads.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
+cat package-recent-releases.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
 
-cat package-ecosystem-downloads.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-ecosystem-downloads.csv
-cat package-recent-releases.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-recent-releases.csv
+cat package-ecosystem-downloads.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-ecosystem-downloads.bq.csv
+cat package-recent-releases.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-recent-releases.bq.csv
 
 duckdb
 
@@ -20,7 +20,7 @@ copy(select dl.project, dl.downloads_count as downloads_30d, recent.* from recen
 
 ### Example: trove classifiers
 
-From `package-recent-releases.sql`, review how many packages declare their support for specific Django versions in their [trove classifiers](https://github.com/pypa/trove-classifiers). Results as of 2025-02-15, one month after Django [5.2 alpha 1 release](https://www.djangoproject.com/weblog/2025/jan/16/django-52-alpha-1-released/).
+From `package-recent-releases.bq.sql`, review how many packages declare their support for specific Django versions in their [trove classifiers](https://github.com/pypa/trove-classifiers). Results as of 2025-02-15, one month after Django [5.2 alpha 1 release](https://www.djangoproject.com/weblog/2025/jan/16/django-52-alpha-1-released/).
 
 | Version      | 5.2          | 5.1       | 5.0       | 4.2       | Total       |
 | ------------ | ------------ | --------- | --------- | --------- | ----------- |
@@ -32,7 +32,7 @@ Evaluates which packages already declare support for Django 5.2, and returns the
 
 Spreadsheet: [Django 5.2 - Django-Wagtail packages ecosystem on PyPI](https://docs.google.com/spreadsheets/d/1CnBjurD7WE0NDXt-KU_Y3p_VABLNKf3pSuDSDUfoSpU/edit?gid=1028186010#gid=1028186010)
 
-SQL: [packages-django-5-2.sql](packages-django-5-2.sql)
+SQL: [packages-django-5-2.bq.sql](packages-django-5-2.bq.sql)
 
 Here are the packages from the first run:
 
