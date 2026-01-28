@@ -5,7 +5,7 @@ SELECT
 FROM
   `bigquery-public-data.pypi.file_downloads` AS dl
 WHERE
-  AND dl.timestamp > TIMESTAMP_SUB (CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+  dl.timestamp > TIMESTAMP_SUB (CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
   AND (
     dl.project IN (
       'django',
