@@ -4,6 +4,11 @@ Tools related to analyzing the packages landscape. Dataset: [PyPI on BigQuery](h
 
 ## Package ecosystem overview
 
+Queries the PyPI dataset on BigQuery to analyze Django-related packages. The process involves:
+
+1. `package-ecosystem-downloads.bq.sql` - Counts 30-day downloads for Django-related packages on PyPI
+2. `package-recent-releases.bq.sql` - Retrieves Django-related packages with their latest release metadata
+
 ```bash
 # Visualize query cost before running.
 cat package-ecosystem-downloads.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
@@ -20,9 +25,9 @@ create table all_pkg as select dl.project, dl.downloads_count as downloads_30d, 
 copy (select * from all_pkg) to './all_pkg.parquet.zst';
 ```
 
-### Example: trove classifiers
+### Example: Trove Classifiers
 
-From `package-recent-releases.bq.sql`, review how many packages declare their support for specific Django versions in their [trove classifiers](https://github.com/pypa/trove-classifiers). Results as of 2025-02-15, one month after Django [5.2 alpha 1 release](https://www.djangoproject.com/weblog/2025/jan/16/django-52-alpha-1-released/).
+Analyzes how many packages declare their support for specific Django versions in their [trove classifiers](https://github.com/pypa/trove-classifiers) based on the data from `package-recent-releases.bq.sql`. Results as of 2025-02-15, one month after Django [5.2 alpha 1 release](https://www.djangoproject.com/weblog/2025/jan/16/django-52-alpha-1-released/).
 
 | Version      | 5.2          | 5.1       | 5.0       | 4.2       | Total       |
 | ------------ | ------------ | --------- | --------- | --------- | ----------- |
@@ -34,7 +39,7 @@ Evaluates which packages already declare support for Django 5.2, and returns the
 
 Spreadsheet: [Django 5.2 - Django-Wagtail packages ecosystem on PyPI](https://docs.google.com/spreadsheets/d/1CnBjurD7WE0NDXt-KU_Y3p_VABLNKf3pSuDSDUfoSpU/edit?gid=1028186010#gid=1028186010)
 
-SQL: [packages-django-5-2.bq.sql](packages-django-5-2.bq.sql)
+SQL: [packages-django-5-2.sql](packages-django-5-2.sql)
 
 Here are the packages from the first run:
 
@@ -65,6 +70,11 @@ Here are the packages from the first run:
 ## Released since
 
 [20,000 Django packages](https://wagtail.org/blog/20000-django-packages/)
+
+Filters packages based on their latest release upload time, generating separate reports for packages released:
+- Within the last year
+- Within the last 3 years
+- Since Django 5.2 release (2025-01-16)
 
 ```sql
 create table all_pkg as select * from './20250724_all_pkg.parquet.zst';
