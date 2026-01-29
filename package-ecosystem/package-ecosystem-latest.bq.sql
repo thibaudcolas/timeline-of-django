@@ -9,6 +9,8 @@ WITH
     WHERE
       packagetype = 'bdist_wheel'
       AND REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
+      OR
+      EXISTS (SELECT 1 FROM UNNEST(classifiers) AS c WHERE c = 'Framework :: Django' or c = 'Framework :: Wagtail')
     GROUP BY
       name
   )

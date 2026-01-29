@@ -21,7 +21,7 @@ WITH
         -- Bug: must account for Django having an uppercase 'D' in its name.
         REGEXP_CONTAINS(name, r'^(django|posthog|ralph|pretix|iommi|wagtail|coderedcms|longclaw|wagalytics|puput|ls\.joyous|feincms|mezzanine)$|^dj|^drf-|^wagtail|^feincms|^mezzanine|wagtail$|django$')
         OR
-        EXISTS (SELECT 1 FROM UNNEST(classifiers) AS c WHERE c = 'Framework :: Django')
+        EXISTS (SELECT 1 FROM UNNEST(classifiers) AS c WHERE c = 'Framework :: Django' or c = 'Framework :: Wagtail')
       )
   ),
   PackageStats AS (

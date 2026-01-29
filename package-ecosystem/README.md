@@ -5,17 +5,19 @@ Tools related to analyzing the packages landscape. Dataset: [PyPI on BigQuery](h
 ## Package ecosystem overview
 
 ```bash
+# Visualize query cost before running.
 cat package-ecosystem-downloads.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
 cat package-recent-releases.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --dry_run 2>&1 | grep -o '[0-9]\+' | awk '{printf "%.2f GB\n", $1/1024/1024/1024}'
 
 cat package-ecosystem-downloads.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-ecosystem-downloads.bq.csv
 cat package-recent-releases.bq.sql | bq query --max_rows 50000 --use_legacy_sql=false --format=csv > package-recent-releases.bq.csv
 
-duckdb
+duckdb all_pkg.duckdb
 
-create table recent as select * from './package-recent-releases.csv';
-create table dl as SELECT * from './package-ecosystem-downloads.csv';
-copy(select dl.project, dl.downloads_count as downloads_30d, recent.* from recent full outer join dl on dl.project = recent.name order by dl.downloads_count desc) to './30d-overview.csv';
+create table recent as select * from './package-recent-releases.bq.csv';
+create table dl as SELECT * from './package-ecosystem-downloads.bq.csv';
+create table all_pkg as select dl.project, dl.downloads_count as downloads_30d, recent.* from recent full outer join dl on dl.project = recent.name order by dl.downloads_count desc;
+copy (select * from all_pkg) to './all_pkg.parquet.zst';
 ```
 
 ### Example: trove classifiers
@@ -69,4 +71,13 @@ create table all_pkg as select * from './20250724_all_pkg.parquet.zst';
 copy(select name, downloads_30d, number_of_releases, markdown from all_pkg where latest_release_upload_time >= NOW() - INTERVAL '1 years' order by latest_release_upload_time desc) to './released_1_year.csv';
 copy(select name, downloads_30d, number_of_releases, markdown from all_pkg where latest_release_upload_time >= NOW() - INTERVAL '3 years' order by latest_release_upload_time desc) to './released_3_year.csv';
 copy(select name, downloads_30d, number_of_releases, markdown from all_pkg where latest_release_upload_time >= CAST('2025-01-16T09:15:08.000Z' AS TIMESTAMP) order by latest_release_upload_time desc) to './released_since_5_2.csv';
+```
+
+## Star counts
+
+Run `./github_stars.py`, then:
+
+```sql
+create table star_counts as select name, repo, star_count from all_pkg;
+copy (select * from star_counts order by star_count desc) to './star-counts.csv';
 ```
