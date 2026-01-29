@@ -1,7 +1,7 @@
 .DS_Store
 wip
-package-all-releases.csv
-package-releases-per-day.csv
 /*.zst
 /*.csv
 /*.zip
+*.parquet
+*.duckdb
