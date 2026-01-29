@@ -75,6 +75,8 @@ copy(select name, downloads_30d, number_of_releases, markdown from all_pkg where
 
 ## Star counts
 
+Fetches GitHub star counts for Django packages using the GitHub CLI GraphQL API. The script connects to the DuckDB database, extracts GitHub repository URLs from package home pages and project URLs, then queries the GitHub API in batches to get star counts.
+
 Run `./github_stars.py`, then:
 
 ```sql
